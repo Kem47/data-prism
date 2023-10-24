@@ -12,7 +12,6 @@ void gz_parser(Specs specs, gzFile fp_gz)
         printf("ERROR: %s: unable to set gzip data file stream to 0", __func__);
         return;
     }
-
     LOG("%s: line length is %i\n", __func__,  length);
     char buffer[length+1];
     if (gzgets(fp_gz, buffer, length) != NULL)
@@ -20,6 +19,8 @@ void gz_parser(Specs specs, gzFile fp_gz)
         buffer[length] = '\n';
         LOG("%s[END]\n", buffer);
     }
+
+
 
     return;
 }

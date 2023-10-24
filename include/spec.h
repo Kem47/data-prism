@@ -18,12 +18,22 @@ typedef struct ColumnInfo
     struct ColumnInfo *next;
 } ColumnInfo;
 
+typedef struct OutputFileInfo
+{
+    FILE *fp;
+    int file_length;
+    char *file_name;
+    char *file_type;
+    struct OutputFileInfo *previous_output_file;
+} OutputFileInfo;
+
 typedef struct RecordTypeInfo
 {
     char *record_type;
     int num_columns;
     ColumnInfo *first_column;
     struct RecordTypeInfo *next;
+    struct OutputFileInto *current_output_file;
 } RecordTypeInfo;
 
 typedef struct Specs

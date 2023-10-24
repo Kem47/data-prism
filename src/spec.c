@@ -34,6 +34,7 @@ Specs get_specs(FILE *fp_spec, char (*ptr_rt_list)[3], uint8_t *ptr_rt_count)
                         LOG("get_specs: ALL TOKENS ARE ON THE LIST: %s\n", token);
                         rt_todo = true;
                         RecordTypeInfo *temp_rt = malloc(sizeof(RecordTypeInfo));
+                        temp_rt->current_output_file = NULL;
                         temp_rt->record_type = malloc(rt_len + 1);
                         strcpy(temp_rt->record_type, token);
                         temp_rt->num_columns = 0;
