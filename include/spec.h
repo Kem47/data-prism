@@ -33,7 +33,8 @@ typedef struct RecordTypeInfo
     int num_columns;
     ColumnInfo *first_column;
     struct RecordTypeInfo *next;
-    struct OutputFileInto *current_output_file;
+    int num_files;
+    struct OutputFileInfo *current_output_file;
 } RecordTypeInfo;
 
 typedef struct Specs

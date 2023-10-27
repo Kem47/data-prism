@@ -5,6 +5,8 @@
 #define FILENAME_FLAG "filename:"
 #define MAX_WRITE_ROWS 500000
 #define BLANK_COLUMN_NAME "blank"
+#define DELIMITOR ','
+#define OUTPUT_FILETYPE "csv"
 
 #define PROGRAM_NAME "cutter"
 

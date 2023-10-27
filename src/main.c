@@ -153,7 +153,7 @@ int main(int argc, char *argv[])
         printf("ERROR: %s: unable to open gzip data file\n", __func__);
         return 1;
     }
-    gz_parser(specs, fp_gz);
+    gz_parser(specs, fp_gz, ptr_in_ff);
     gzclose(fp_gz);
 
     // This has been commented out because at the moment the strategy is to use gzopen and gzread from zlib
