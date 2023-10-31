@@ -11,6 +11,7 @@
 
 void gz_parser(Specs specs, gzFile fp_gz, char *input_filename);
 void open_new_output_file(RecordTypeInfo *rt_specs, char *input_filename);
-void write_row(void);
+void write_row(RecordTypeInfo *rt_specs, char *line);
+char * trim(char *intput);
 
 #endif /* PRARSE_H */

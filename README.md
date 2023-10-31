@@ -14,7 +14,8 @@ The goals of this project to:
 ### Current progress:
 - [x] Get the inputs.
 - [x] Parse the spec file and save into memory (spec.c).
-- [ ] (WIP) Parse the data file using the specs and save the record type into individual files (parse.c).
+- [x] Parse the data file using the specs and save the record type into individual files (parse.c).
+- [ ] (WIP) Test accuracy of data.
 - [ ] Memory cleanup.
 - [ ] General code cleanup, refactoring and optimisation.
 

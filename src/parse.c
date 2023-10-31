@@ -51,7 +51,7 @@ void gz_parser(Specs specs, gzFile fp_gz, char *input_filename)
     while (gzgets(fp_gz, buffer, length+1) != NULL)
     {
         buffer[length-1] = '\0';
-        LOG("%s[END OF LINE] Line size is %li\n", buffer, strlen(buffer));
+        // LOG("%s[END OF LINE] Line size is %li\n", buffer, strlen(buffer));
         // char input_record_type[rt_len+1];
         // for (int i = 0, limit = rt_len + 1; i < limit; i++)
         // {
@@ -73,11 +73,7 @@ void gz_parser(Specs specs, gzFile fp_gz, char *input_filename)
                     LOG("%s: GOT HERE 2\n", __func__);
                     open_new_output_file(next, input_filename); // TODO
                 }
-                else
-                {
-                    LOG("%s: HERE INSTEAD\n", __func__);
-                }
-                write_row();
+                write_row(next, buffer);
                 break;
             }
             else
@@ -112,29 +108,102 @@ void open_new_output_file(RecordTypeInfo *rt_specs, char *input_filename)
     rt_specs->num_files++;
 
     new_file->file_length = 0;
+
     new_file->file_type = malloc(sizeof(OUTPUT_FILETYPE) + 1);
     strcpy(new_file->file_type, OUTPUT_FILETYPE);
+    
     char file_number[5]; // HARDCODED
     sprintf(file_number, "%d", rt_specs->num_files);
+    
     new_file->file_name = malloc(sizeof(input_filename) + sizeof(OUTPUT_FILETYPE) + sizeof(rt_specs->record_type) + strlen(file_number) + (sizeof("_") * 2) + sizeof(".") + 1);
     sprintf(new_file->file_name, "%s_%s_%s.%s", input_filename, rt_specs->record_type, file_number, OUTPUT_FILETYPE);
     LOG("%s: output filename is %s\n", __func__, new_file->file_name);
     // "input/B20231010.PVX.Z_02_1.csv"
 
-    FILE *ptr_output_file = fopen(new_file->file_name, "a");
+    FILE *ptr_output_file = fopen(new_file->file_name, "w");
     new_file->fp = ptr_output_file;
 
     ColumnInfo *next_column = rt_specs->first_column;
+    char delimiter = DELIMITER;
+    char newline = '\n';
 
     while (next_column != NULL)
     {
-        
+        if (strcmp(next_column->name, BLANK_COLUMN_NAME) == 0)
+        {
+            next_column = next_column->next;
+            continue;
+        }
+        if (fwrite(next_column->name, strlen(next_column->name), 1, ptr_output_file) != 1)
+        {
+            printf("ERROR: %s: writing column name to new output file", __func__);
+        }
 
         next_column = next_column->next;
+
+        if (next_column != NULL)
+        {
+            fwrite(&delimiter, sizeof(delimiter), 1, ptr_output_file);
+        }
+        else
+        {
+            break;
+        }
     }
+    fwrite(&newline, sizeof(char), 1, ptr_output_file);
+    fflush(ptr_output_file);
+    LOG("%s: FINISHED\n", __func__);
 }
 
-void write_row(void)
+void write_row(RecordTypeInfo *rt_specs, char *line)
 {
-    //
+    int start = 0;
+    int len;
+    char delimiter = DELIMITER;
+    char newline = '\n';
+    ColumnInfo *next_col = rt_specs->first_column;
+    while (next_col != NULL)
+    {
+        if (strcmp(next_col->name, BLANK_COLUMN_NAME) == 0)
+        {
+            next_col = next_col->next;
+            continue;
+        }
+
+        len = next_col->size;
+        while (*(line+start) == '0' || *(line+start) == ' ')
+        {
+            start++;
+            len--;
+        }
+        if (len > 0)
+        {
+            fwrite(line+start, len, 1, rt_specs->current_output_file->fp);
+        }
+        // fwrite(line+start, next_col->size, 1, rt_specs->current_output_file->fp);
+        // start += next_col->size;
+        start += len;
+
+        next_col = next_col->next;
+        if (next_col != NULL)
+        {
+            fwrite(&delimiter, sizeof(delimiter), 1, rt_specs->current_output_file->fp);
+        }
+        else
+        {
+            break;
+        }
+    }
+    fwrite(&newline, sizeof(char), 1, rt_specs->current_output_file->fp);
+    fflush(rt_specs->current_output_file->fp);
+
+    rt_specs->current_output_file->file_length++;
+}
+
+char * trim(char *input_string)
+{
+    while (*input_string == '0' || *input_string == ' ') {
+        input_string++;
+    }
+    return input_string;
 }
