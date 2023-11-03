@@ -10,7 +10,7 @@ Specs get_specs(FILE *fp_spec, char (*ptr_rt_list)[3], uint8_t *ptr_rt_count)
     LOG("get_specs: after initialisation num_rt is: %i\n", specs.num_rt);
     // LOG("get_specs: rt_len is: %i\n", rt_len);
     fseek(fp_spec, 0, SEEK_SET);
-    char buffer[1024];  // TODO this value of 1024 is hard-coded and could cause issues if any lines in the spec file are longer. Need to see if I can add some dynamism to this.
+    char buffer[1024];  // HARDCODED this value of 1024 is hard-coded and could cause issues if any lines in the spec file are longer. Need to see if I can add some dynamism to this.
     while (fgets(buffer, sizeof(buffer), fp_spec) != NULL)
     {
         if (strncmp("rt:", buffer, 3) == 0)

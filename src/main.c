@@ -143,7 +143,8 @@ int main(int argc, char *argv[])
 
 
     Specs specs = get_specs(fp_spec, ptr_rt_list, ptr_rt_count);
-    print_specs(&specs);
+    comp_specs_inputs(&specs, ptr_rt_list, ptr_rt_count);
+    // print_specs(&specs);
     LOG("the num_rt is: %i\n", specs.num_rt);
     fclose(fp_spec);
 
@@ -155,6 +156,10 @@ int main(int argc, char *argv[])
     }
     gz_parser(specs, fp_gz, ptr_in_ff);
     gzclose(fp_gz);
+
+    close_output_files(&specs);
+    release_specs_mem(&specs);
+
 
     // This has been commented out because at the moment the strategy is to use gzopen and gzread from zlib
     // Because of that I do not need to find out if it's zipped.

@@ -1,6 +1,6 @@
 #include "parse.h"
 
-void gz_parser(Specs specs, gzFile fp_gz, char *input_filename)
+void gz_parser(Specs specs, gzFile fp_gz, char *input_filename) // I should probably pass in specs as a 
 {
     int rt_len = strlen(specs.first_rt->record_type);
     LOG("%s: rt_len is %i\n", __func__, rt_len);
@@ -14,7 +14,8 @@ void gz_parser(Specs specs, gzFile fp_gz, char *input_filename)
 
     char buffer[length+1];
     LOG("%s: line length is %i and buffer length is %li\n", __func__,  length, sizeof(buffer));
-    
+    int ffreq = fflush_frequency(length, specs.num_rt);
+    printf("%s: fflush_frequency is %i\n", __func__, ffreq);
     // if (gzgets(fp_gz, buffer, length+1) != NULL)
     // {
     //     // buffer[length] = '\0';
@@ -50,7 +51,8 @@ void gz_parser(Specs specs, gzFile fp_gz, char *input_filename)
 
     while (gzgets(fp_gz, buffer, length+1) != NULL)
     {
-        buffer[length-1] = '\0';
+        buffer[length-1] = '\0';  // this overwrites the '\n' character at the end so that it is just the data from that line
+
         // LOG("%s[END OF LINE] Line size is %li\n", buffer, strlen(buffer));
         // char input_record_type[rt_len+1];
         // for (int i = 0, limit = rt_len + 1; i < limit; i++)
@@ -73,7 +75,7 @@ void gz_parser(Specs specs, gzFile fp_gz, char *input_filename)
                     LOG("%s: GOT HERE 2\n", __func__);
                     open_new_output_file(next, input_filename); // TODO
                 }
-                write_row(next, buffer);
+                write_row(next, buffer, ffreq);
                 break;
             }
             else
@@ -84,7 +86,7 @@ void gz_parser(Specs specs, gzFile fp_gz, char *input_filename)
 
         if (!rt_spec_found)
         {
-            buffer[rt_len] = '\n';
+            buffer[rt_len] = '\0';
             printf("WARNING: your spec file did not have specs for record type %s\n", buffer);
         }
     }
@@ -155,7 +157,7 @@ void open_new_output_file(RecordTypeInfo *rt_specs, char *input_filename)
     LOG("%s: FINISHED\n", __func__);
 }
 
-void write_row(RecordTypeInfo *rt_specs, char *line)
+void write_row(RecordTypeInfo *rt_specs, char *line, int ffreq)
 {
     int start = 0;
     int len;
@@ -178,7 +180,7 @@ void write_row(RecordTypeInfo *rt_specs, char *line)
         }
         if (len > 0)
         {
-            fwrite(line+start, len, 1, rt_specs->current_output_file->fp);
+            fwrite(line+start, len, 1, rt_specs->current_output_file->fp);  // some delicious pointer maths here ;)
         }
         // fwrite(line+start, next_col->size, 1, rt_specs->current_output_file->fp);
         // start += next_col->size;
@@ -195,15 +197,10 @@ void write_row(RecordTypeInfo *rt_specs, char *line)
         }
     }
     fwrite(&newline, sizeof(char), 1, rt_specs->current_output_file->fp);
-    fflush(rt_specs->current_output_file->fp);
-
-    rt_specs->current_output_file->file_length++;
-}
-
-char * trim(char *input_string)
-{
-    while (*input_string == '0' || *input_string == ' ') {
-        input_string++;
+    if (rt_specs->current_output_file->file_length % ffreq == 0)
+    {
+        fflush(rt_specs->current_output_file->fp);
     }
-    return input_string;
+    
+    rt_specs->current_output_file->file_length++;
 }
