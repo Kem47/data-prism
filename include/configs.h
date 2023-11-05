@@ -7,7 +7,7 @@
 #define BLANK_COLUMN_NAME "blank"
 #define DELIMITER ','               // must be a char (see prase.c for usage)
 #define OUTPUT_FILETYPE "csv"
-#define MEMORY_LIMIT 50000000       // bytes
+#define MEMORY_LIMIT 100000000       // bytes
 
 #define PROGRAM_NAME "cutter"
 

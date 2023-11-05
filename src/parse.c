@@ -103,6 +103,7 @@ void open_new_output_file(RecordTypeInfo *rt_specs, char *input_filename)
     if (rt_specs->current_output_file != NULL)
     {
         fclose(rt_specs->current_output_file->fp);
+        rt_specs->current_output_file->fp = NULL;
     }
     OutputFileInfo *new_file = malloc(sizeof(OutputFileInfo));
     new_file->previous_output_file = rt_specs->current_output_file;
@@ -111,13 +112,13 @@ void open_new_output_file(RecordTypeInfo *rt_specs, char *input_filename)
 
     new_file->file_length = 0;
 
-    new_file->file_type = malloc(sizeof(OUTPUT_FILETYPE) + 1);
+    new_file->file_type = malloc(strlen(OUTPUT_FILETYPE) + 1);
     strcpy(new_file->file_type, OUTPUT_FILETYPE);
     
     char file_number[5]; // HARDCODED
     sprintf(file_number, "%d", rt_specs->num_files);
     
-    new_file->file_name = malloc(sizeof(input_filename) + sizeof(OUTPUT_FILETYPE) + sizeof(rt_specs->record_type) + strlen(file_number) + (sizeof("_") * 2) + sizeof(".") + 1);
+    new_file->file_name = malloc(strlen(input_filename) + strlen(OUTPUT_FILETYPE) + strlen(rt_specs->record_type) + strlen(file_number) + (strlen("_") * 2) + strlen(".") + 1);
     sprintf(new_file->file_name, "%s_%s_%s.%s", input_filename, rt_specs->record_type, file_number, OUTPUT_FILETYPE);
     LOG("%s: output filename is %s\n", __func__, new_file->file_name);
     // "input/B20231010.PVX.Z_02_1.csv"

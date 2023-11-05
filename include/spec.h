@@ -15,6 +15,7 @@ typedef struct ColumnInfo
 {
     char *name;
     int size;
+    int ref_count;
     struct ColumnInfo *next;
 } ColumnInfo;
 

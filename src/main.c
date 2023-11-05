@@ -65,13 +65,13 @@ int main(int argc, char *argv[])
     }
     else
     {
-        ptr_in_ff = malloc(sizeof(argv[1]));
+        ptr_in_ff = malloc(strlen(argv[1]) + 1);
         if (ptr_in_ff == NULL)
         {
             printf("Failed to allocate memory for ptr_in_ff");
             return 2;
         }
-        ptr_in_spec = malloc(sizeof(argv[2]));
+        ptr_in_spec = malloc(strlen(argv[2]) + 1);
         if (ptr_in_spec == NULL)
         {
             printf("Failed to allocate memory for ptr_in_spec");
@@ -140,7 +140,7 @@ int main(int argc, char *argv[])
     {
         LOG("The filename is: %s\n", filetype);
     }
-
+    free(filetype);
 
     Specs specs = get_specs(fp_spec, ptr_rt_list, ptr_rt_count);
     comp_specs_inputs(&specs, ptr_rt_list, ptr_rt_count);
@@ -157,9 +157,14 @@ int main(int argc, char *argv[])
     gz_parser(specs, fp_gz, ptr_in_ff);
     gzclose(fp_gz);
 
-    close_output_files(&specs);
-    release_specs_mem(&specs);
-
+    // close_output_files(&specs);
+    // release_mem_fp(&specs);
+    release_mem_fp_rec(&specs);
+    
+    free(ptr_rt_count);
+    free(ptr_in_ff);
+    free(ptr_in_spec);
+    free(ptr_rt_list);
 
     // This has been commented out because at the moment the strategy is to use gzopen and gzread from zlib
     // Because of that I do not need to find out if it's zipped.
@@ -217,7 +222,7 @@ char* get_file_spec_match(FILE *fp_spec, char *df_name)
         if (strstr(df_name, filename_token) != NULL)
         {
             LOG("returning filename token: %s\n", filename_token);
-            char *return_value = malloc(sizeof(filename_token));
+            char *return_value = malloc(strlen(filename_token) + 1);
             strcpy(return_value, filename_token);
             return return_value;
         }

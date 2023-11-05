@@ -15,7 +15,12 @@ void comp_specs_inputs(Specs *specs, char (*ptr_rt_list)[3], uint8_t *ptr_rt_cou
 int fflush_frequency(int line_len, int num_rt);
 
 void close_output_files(Specs *specs);
-void release_specs_mem(Specs *specs);
+void release_mem_fp(Specs *specs);
+
+void free_column_info(ColumnInfo *col);
+void free_output_file_info(OutputFileInfo *output_file);
+void free_record_type_info(RecordTypeInfo *rt);
+void release_mem_fp_rec(Specs *specs);
 
 
 #endif /* UTILS_H */

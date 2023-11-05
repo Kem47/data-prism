@@ -137,6 +137,7 @@ Specs get_specs(FILE *fp_spec, char (*ptr_rt_list)[3], uint8_t *ptr_rt_count)
                 
                 LOG("GETS HERE 4\n");
                 // assign the pointer of this column/width linked list to all RecordTypeInfo that have NULL
+                // first->ref_count++;   // adding the count of references to this column linked list so that I can free it correctly
                 RecordTypeInfo *next = specs.first_rt;
                 while (next != NULL)
                 {
@@ -144,6 +145,7 @@ Specs get_specs(FILE *fp_spec, char (*ptr_rt_list)[3], uint8_t *ptr_rt_count)
                     {
                         next->first_column = first;
                         next->num_columns = count;
+                        first->ref_count++;  // adding the count of references to this column linked list so that I can free it correctly
                     }
                     next = next->next;
                 }
@@ -169,6 +171,7 @@ void print_specs(Specs *specs)
         {
             printf("Column name: \"%s\"\n", col_info->name);
             printf("Column size: %d\n", col_info->size);
+            printf("Column ref count: %i\n", col_info->ref_count);
         }
     }
 }

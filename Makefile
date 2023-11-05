@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Iinclude 
+CFLAGS = -Iinclude
 LDFLAGS = -lcs50 -lz
 SRC_DIR = src
 BIN_DIR = bin
