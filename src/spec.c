@@ -85,10 +85,14 @@ Specs get_specs(FILE *fp_spec, char (*ptr_rt_list)[3], uint8_t *ptr_rt_count)
                         trim_whitespace(token);
                         LOG("column_name: the name of the column is %s\n", token);
                         ColumnInfo *temp_col = malloc(sizeof(ColumnInfo));
+                        // ColumnInfo *temp_col = calloc(1, sizeof(ColumnInfo));  // use this to avoid "Conditional jump or move depends on uninitialised value(s)" message from Valgrind
                         LOG("column_name: got past first malloc\n");
                         temp_col->name = malloc(strlen(token) + 1);
                         LOG("column_name: got past second malloc\n");
                         strcpy(temp_col->name, token);
+                        // temp_col->size = 0;
+                        temp_col->ref_count = 0; // use this to avoid "Conditional jump or move depends on uninitialised value(s)" message from Valgrind
+                        temp_col->next = NULL; // use this to avoid "Conditional jump or move depends on uninitialised value(s)" message from Valgrind
                         count++;
                         if (last == NULL)
                         {

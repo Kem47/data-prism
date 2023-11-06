@@ -15,7 +15,7 @@ void gz_parser(Specs specs, gzFile fp_gz, char *input_filename) // I should prob
     char buffer[length+1];
     LOG("%s: line length is %i and buffer length is %li\n", __func__,  length, sizeof(buffer));
     int ffreq = fflush_frequency(length, specs.num_rt);
-    printf("%s: fflush_frequency is %i\n", __func__, ffreq);
+    LOG("%s: fflush_frequency is %i\n", __func__, ffreq);
     // if (gzgets(fp_gz, buffer, length+1) != NULL)
     // {
     //     // buffer[length] = '\0';
@@ -84,11 +84,11 @@ void gz_parser(Specs specs, gzFile fp_gz, char *input_filename) // I should prob
             }
         }
 
-        if (!rt_spec_found)
-        {
-            buffer[rt_len] = '\0';
-            printf("WARNING: your spec file did not have specs for record type %s\n", buffer);
-        }
+        // if (!rt_spec_found)
+        // {
+        //     buffer[rt_len] = '\0';
+        //     printf("WARNING: your spec file did not have specs for record type %s\n", buffer);
+        // }
     }
 
 

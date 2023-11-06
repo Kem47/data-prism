@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
             for (int i = 0; i < *ptr_rt_count; i++)
             {
                 strcpy(ptr_rt_list[i], argv[i+3]);
-                ptr_rt_list[i][3] = '\0';
+                ptr_rt_list[i][2] = '\0';
                 LOG("%s\n", ptr_rt_list[i]);
             }
         }
