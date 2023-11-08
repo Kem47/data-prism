@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Iinclude
-LDFLAGS = -lcs50 -lz
+LDFLAGS = /usr/lib/libcs50.a /usr/lib/x86_64-linux-gnu/libz.a
 SRC_DIR = src
 BIN_DIR = bin
 

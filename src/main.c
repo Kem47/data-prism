@@ -143,7 +143,10 @@ int main(int argc, char *argv[])
     free(filetype);
 
     Specs specs = get_specs(fp_spec, ptr_rt_list, ptr_rt_count);
-    comp_specs_inputs(&specs, ptr_rt_list, ptr_rt_count);
+    if (*ptr_rt_count != 0)
+    {
+        comp_specs_inputs(&specs, ptr_rt_list, ptr_rt_count);
+    }
     // print_specs(&specs);
     LOG("the num_rt is: %i\n", specs.num_rt);
     fclose(fp_spec);
@@ -185,7 +188,7 @@ int main(int argc, char *argv[])
 
 
 
-
+    printf("-- COMPLETE --\n");
 
     return 0;
 }
@@ -242,27 +245,35 @@ int manual_inputs(char **ptr_in_ff, char **ptr_in_spec, char (**ptr_rt_list)[3],
     // LOG("this is len of in_rt_blob: %li\n", strlen(in_rt_blob));
     remove_trailing_spaces(in_rt_blob);
 
-    **ptr_rt_count = ((uint8_t) strlen(in_rt_blob) + 1) / 3;
-    // LOG("this is ptr_rt_count: %i\n", **ptr_rt_count);
-    *ptr_rt_list = malloc((**ptr_rt_count) * sizeof(char[3]));
-    // LOG("these are the various sizes: %li, %li, %li\n", sizeof(ptr_rt_list), sizeof(*ptr_rt_list), sizeof(**ptr_rt_list));
-    if (*ptr_rt_list == NULL)
+    if (strcmp(in_rt_blob, "all") == 0)
     {
-        printf("Failed to allocate memory for ptr_rt_list");
-        return 2;
+        **ptr_rt_count = 0;
+        return 0;
     }
-    
-    char *input_delim = " ";
-    char *in_rt_token = strtok(in_rt_blob, input_delim);
+    else
+    {
+        **ptr_rt_count = ((uint8_t) strlen(in_rt_blob) + 1) / 3;
+        // LOG("this is ptr_rt_count: %i\n", **ptr_rt_count);
+        *ptr_rt_list = malloc((**ptr_rt_count) * sizeof(char[3]));
+        // LOG("these are the various sizes: %li, %li, %li\n", sizeof(ptr_rt_list), sizeof(*ptr_rt_list), sizeof(**ptr_rt_list));
+        if (*ptr_rt_list == NULL)
+        {
+            printf("Failed to allocate memory for ptr_rt_list");
+            return 2;
+        }
+        
+        char *input_delim = " ";
+        char *in_rt_token = strtok(in_rt_blob, input_delim);
 
-    for (int i = 0; i < **ptr_rt_count && in_rt_token != NULL; i++)
-    {
-        // LOG("this is the token: %s\n", in_rt_token);
-        strcpy((*ptr_rt_list)[i], in_rt_token);
-        in_rt_token = strtok(NULL, input_delim);
-        // LOG("%s\n", (*ptr_rt_list)[i]);
+        for (int i = 0; i < **ptr_rt_count && in_rt_token != NULL; i++)
+        {
+            // LOG("this is the token: %s\n", in_rt_token);
+            strcpy((*ptr_rt_list)[i], in_rt_token);
+            in_rt_token = strtok(NULL, input_delim);
+            // LOG("%s\n", (*ptr_rt_list)[i]);
+        }
+        return 0;
     }
-    return 0;
 }
 
 void remove_trailing_spaces(char *str)

@@ -22,5 +22,7 @@ void free_output_file_info(OutputFileInfo *output_file);
 void free_record_type_info(RecordTypeInfo *rt);
 void release_mem_fp_rec(Specs *specs);
 
+char* prompt_and_get_string(char* prompt);
+
 
 #endif /* UTILS_H */

@@ -67,12 +67,12 @@ void gz_parser(Specs specs, gzFile fp_gz, char *input_filename) // I should prob
         {
             if (strncmp(next->record_type, buffer, 2) == 0)
             {
-                LOG("%s: GOT HERE 1 with rt %s\n", __func__, next->record_type);
-                LOG("%s: output file pointer is %p\n", __func__, next->current_output_file);
+                // LOG("%s: GOT HERE 1 with rt %s\n", __func__, next->record_type);
+                // LOG("%s: output file pointer is %p\n", __func__, next->current_output_file);
                 rt_spec_found = true;
                 if (next->current_output_file == NULL || next->current_output_file->file_length >= MAX_WRITE_ROWS)
                 {
-                    LOG("%s: GOT HERE 2\n", __func__);
+                    // LOG("%s: GOT HERE 2\n", __func__);
                     open_new_output_file(next, input_filename); // TODO
                 }
                 write_row(next, buffer, ffreq);

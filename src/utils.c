@@ -27,15 +27,25 @@ int gz_get_line_length(gzFile fp)
 void comp_specs_inputs(Specs *specs, char (*ptr_rt_list)[3], uint8_t *ptr_rt_count)
 {
     RecordTypeInfo *next = specs->first_rt;
+    bool found;
     while (next != NULL)
     {
+        found = false;
+        
         for (int i = 0; i < *ptr_rt_count; i++)
         {
-            if (strcmp(next->record_type, ptr_rt_list[i]) != 0)
+            LOG("%s: rt in spec is %s and rt in input list is %s\n", __func__, next->record_type, ptr_rt_list[i]);
+            if (strcmp(next->record_type, ptr_rt_list[i]) == 0)
             {
-                printf("WARNING: your spec file did not have specs for record type %s\n", next->record_type);
+                found = true;
             }
         }
+
+        if (!found)
+        {
+            printf("WARNING: your spec file did not have specs for record type %s\n", next->record_type);
+        }
+
         next = next->next;
     }
 }
@@ -187,3 +197,17 @@ void release_mem_fp_rec(Specs *specs)
 {
     free_record_type_info(specs->first_rt);
 }
+
+
+// My get string
+char* prompt_and_get_string(char* prompt) 
+{
+    printf("%s", prompt);
+    char* line = NULL;
+    size_t bufsize = 0;
+    getline(&line, &bufsize, stdin);
+    return line;
+}
+
+
+
