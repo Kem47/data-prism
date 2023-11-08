@@ -12,6 +12,7 @@ int get_line_length(FILE *fp)
     return length;
 }
 
+
 int gz_get_line_length(gzFile fp)
 {
     LOG("%s started\n", __func__);
@@ -23,6 +24,7 @@ int gz_get_line_length(gzFile fp)
     }
     return length;
 }
+
 
 void comp_specs_inputs(Specs *specs, char (*ptr_rt_list)[3], uint8_t *ptr_rt_count)
 {
@@ -51,7 +53,6 @@ void comp_specs_inputs(Specs *specs, char (*ptr_rt_list)[3], uint8_t *ptr_rt_cou
 }
 
 
-
 int fflush_frequency(int line_len, int num_rt)
 {
     // create an algorithm that determines how frequently to flush based on how large the lines are and how many output files there are
@@ -78,40 +79,40 @@ void close_output_files(Specs *specs)
 // RELEASE MEMORY
 
 // ORIGINAL
-void release_mem_fp(Specs *specs)
-{
-    // 
-    RecordTypeInfo *rt = specs->first_rt;
-    while (rt != NULL)
-    {
-        ColumnInfo *col = rt->first_column;
-        while (col != NULL)
-        {
-            ColumnInfo *next_col = col->next;
-            free(col->name);
-            free(col);
-            col = next_col;
-        }
+// void release_mem_fp(Specs *specs)
+// {
+//     // 
+//     RecordTypeInfo *rt = specs->first_rt;
+//     while (rt != NULL)
+//     {
+//         ColumnInfo *col = rt->first_column;
+//         while (col != NULL)
+//         {
+//             ColumnInfo *next_col = col->next;
+//             free(col->name);
+//             free(col);
+//             col = next_col;
+//         }
 
-        OutputFileInfo *output_file = rt->current_output_file;
-        while (output_file != NULL)
-        {
-            OutputFileInfo *next_output_file = output_file->previous_output_file;
-            fclose(output_file->fp);
-            free(output_file->file_name);
-            free(output_file->file_type);
-            free(output_file);
-            output_file = next_output_file;
-        }
+//         OutputFileInfo *output_file = rt->current_output_file;
+//         while (output_file != NULL)
+//         {
+//             OutputFileInfo *next_output_file = output_file->previous_output_file;
+//             fclose(output_file->fp);
+//             free(output_file->file_name);
+//             free(output_file->file_type);
+//             free(output_file);
+//             output_file = next_output_file;
+//         }
 
-        RecordTypeInfo *next_rt = rt->next;
-        free(rt->record_type);
-        free(rt);
-        rt = next_rt;
-    }
+//         RecordTypeInfo *next_rt = rt->next;
+//         free(rt->record_type);
+//         free(rt);
+//         rt = next_rt;
+//     }
 
-    free(specs);
-}
+//     free(specs);
+// }
 
 // WITH RECURSION
 void free_column_info(ColumnInfo *col)
@@ -199,15 +200,59 @@ void release_mem_fp_rec(Specs *specs)
 }
 
 
-// My get string
-char* prompt_and_get_string(char* prompt) 
+void remove_trailing_spaces(char *str)
 {
-    printf("%s", prompt);
-    char* line = NULL;
-    size_t bufsize = 0;
-    getline(&line, &bufsize, stdin);
-    return line;
+    int len = strlen(str);
+    while (len > 0 && isspace(str[len - 1]))
+    {
+        len--;
+    }
+    str[len] = '\0';
 }
 
 
+char* get_file_spec_match(FILE *fp_spec, char *df_name)
+{
+    int length = get_line_length(fp_spec);
+    fseek(fp_spec, 0, SEEK_SET);
+    char buffer[length+1];
+    fgets(buffer, sizeof(buffer), fp_spec);
+    char *target = "filename";
+    if (strstr(buffer, target) == NULL)
+    {
+        printf("\"filename\" was not found on the first line of the spec file.\n");
+    }
 
+    char *filenames = buffer + 10;
+    LOG("the length of the line is: %i\n", length);
+    LOG("the line is: %s\n", buffer);
+    LOG("the filenames are: %s\n", filenames);
+
+    char *delim = " ";
+    char *filename_token = strtok(filenames, delim);
+    while (filename_token != NULL)
+    {
+        LOG("the token is: %s\n", filename_token);
+        // TODO: add case insensitivity: convert both filename_token and df_name to upper/lower
+        if (strstr(df_name, filename_token) != NULL)
+        {
+            LOG("returning filename token: %s\n", filename_token);
+            char *return_value = malloc(strlen(filename_token) + 1);
+            strcpy(return_value, filename_token);
+            return return_value;
+        }
+        filename_token = strtok(NULL, delim);
+    }
+    return NULL;
+}
+
+
+// My get string function - not in use yet
+// char* prompt_and_get_string(char* prompt) 
+// {
+//     printf("%s", prompt);
+//     char* line = NULL;
+//     size_t bufsize = 0;
+//     getline(&line, &bufsize, stdin);
+//     return line;
+// }

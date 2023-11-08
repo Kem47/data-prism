@@ -1,14 +1,14 @@
 #ifndef SPEC_H
 #define SPEC_H
 
+#include <ctype.h>
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
-#include <string.h>
-#include <ctype.h>
 #include <stdlib.h>
-#include <stdbool.h>
-#include "logging.h"
+#include <string.h>
 #include "configs.h"
+#include "logging.h"
 
 
 typedef struct ColumnInfo
@@ -45,9 +45,10 @@ typedef struct Specs
 } Specs;
 
 
-
 Specs get_specs(FILE *fp_spec, char (*ptr_rt_list)[3], uint8_t *ptr_rt_count);
+
 void trim_whitespace(char *str);
+
 void print_specs(Specs *specs);
 
 

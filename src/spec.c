@@ -90,7 +90,7 @@ Specs get_specs(FILE *fp_spec, char (*ptr_rt_list)[3], uint8_t *ptr_rt_count)
                         temp_col->name = malloc(strlen(token) + 1);
                         // LOG("column_name: got past second malloc\n");
                         strcpy(temp_col->name, token);
-                        // temp_col->size = 0;
+                        // temp_col->size = 0;  // use this to avoid "Conditional jump or move depends on uninitialised value(s)" message from Valgrind
                         temp_col->ref_count = 0; // use this to avoid "Conditional jump or move depends on uninitialised value(s)" message from Valgrind
                         temp_col->next = NULL; // use this to avoid "Conditional jump or move depends on uninitialised value(s)" message from Valgrind
                         count++;
@@ -141,7 +141,6 @@ Specs get_specs(FILE *fp_spec, char (*ptr_rt_list)[3], uint8_t *ptr_rt_count)
                 
                 // LOG("GETS HERE 4\n");
                 // assign the pointer of this column/width linked list to all RecordTypeInfo that have NULL
-                // first->ref_count++;   // adding the count of references to this column linked list so that I can free it correctly
                 RecordTypeInfo *next = specs.first_rt;
                 while (next != NULL)
                 {
@@ -183,14 +182,12 @@ void print_specs(Specs *specs)
 
 void trim_whitespace(char *str)
 {
-    // Remove leading whitespace
     char *start = str;
     while (isspace(*start))
     {
         start++;
     }
 
-    // Remove trailing whitespace
     char *end = str + strlen(str) - 1;
     while (end > start && isspace(*end))
     {
@@ -198,7 +195,6 @@ void trim_whitespace(char *str)
     }
     *(end + 1) = '\0';
 
-    // Shift the trimmed string to the beginning of the input string
     if (start != str)
     {
         memmove(str, start, end - start + 2);

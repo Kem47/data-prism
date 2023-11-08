@@ -1,39 +1,25 @@
-#include <cs50.h>
 #include <ctype.h>
 #include <stdbool.h>
-#include <stdio.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <cs50.h>
 #include <zlib.h>
-#include "unzip.h"
-#include "spec.h"
-#include "parse.h"
-#include "logging.h"
 #include "configs.h"
+#include "logging.h"
+#include "parse.h"
+#include "spec.h"
+#include "unzip.h"
 #include "utils.h"
 
 
-// typedef struct
-// {
-//     char *in_ff;
-//     char *in_spec;
-//     char (*rt_list)[3];
-//     int rt_count;
-// } inputs;
-
 int manual_inputs(char **ptr_in_ff, char **ptr_in_spec, char (**ptr_rt_list)[3], uint8_t **ptr_rt_count);
-void remove_trailing_spaces(char *str);
-char* get_file_spec_match(FILE *fp_spec, char *df_name);
 
 
 int main(int argc, char *argv[])
 {
-    // char *in_env_logging = getenv("LOGGING");
-    // if (in_env_logging && atoi(in_env_logging) == 1)
-    // {
-
-    // }
+    printf("\n========================================\n  DATA-PRISM\n  Program by KEMAL ATAYEV\n  Version: Beta 2\n========================================\n\n");
 
     // USER INPUTS
 
@@ -51,7 +37,7 @@ int main(int argc, char *argv[])
 
     if (argc < 4)
     {
-        printf("You have not included the required inputs when running this program.\nThe correct usage is as follows:\nFor individual file: ./%s input.file file_spec.dfs 03 06 16 28 etc\nFor folders: ./%s input_folder file_spec.dfs 03 06 16 28 etc\n", PROGRAM_NAME, PROGRAM_NAME);
+        printf("You have not included the required inputs when running this program in CLI.\nThe correct usage is as follows:\nFor individual file: ./%s input.file file_spec.dfs 03 06 16 28 etc\n", PROGRAM_NAME);
         char guided_entry = get_char("Would you like to enable manual entry mode? (y/n) ");
         if (guided_entry == 'y')
         {
@@ -100,22 +86,6 @@ int main(int argc, char *argv[])
                 LOG("%s\n", ptr_rt_list[i]);
             }
         }
-
-
-        // version for before "all" was introduced
-        // *ptr_rt_count = argc - 3;
-        // ptr_rt_list = malloc(3 * (*ptr_rt_count));
-        // if (ptr_rt_list == NULL)
-        // {
-        //     printf("Failed to allocate memory for ptr_rt_list");
-        //     return 2;
-        // }
-        // for (int i = 0; i < *ptr_rt_count; i++)
-        // {
-        //     strcpy(ptr_rt_list[i], argv[i+3]);
-        //     ptr_rt_list[i][3] = '\0';
-        //     LOG("%s\n", ptr_rt_list[i]);
-        // }
     }
     LOG("Input file/folder is: %s\n", ptr_in_ff);
     LOG("Input spec file is: %s\n", ptr_in_spec);
@@ -169,78 +139,18 @@ int main(int argc, char *argv[])
     free(ptr_in_spec);
     free(ptr_rt_list);
 
-    // This has been commented out because at the moment the strategy is to use gzopen and gzread from zlib
-    // Because of that I do not need to find out if it's zipped.
-    //
-    // char *zip_ext;
-    // zip_ext = is_df_zipped(ptr_in_ff, filetype);
-    // if (zip_ext != NULL)
-    // {
-    //     LOG("the file zip extension is: %s\n", zip_ext);
-    //     char *unzipped_filepath = get_unzipped_filepath(ptr_in_ff, zip_ext);
-    //     LOG("the unzipped filepath is: %s\n", unzipped_filepath);
-    //     unzip(ptr_in_ff, unzipped_filepath);
-    // }
-    // else
-    // {
-    //     LOG("the file is not zipped\n");
-    // }
-
-
-
-    printf("-- COMPLETE --\n");
+    printf("=== COMPLETE ===\n");
 
     return 0;
 }
 
 
-
-
-
-
-
-char* get_file_spec_match(FILE *fp_spec, char *df_name)
-{
-    int length = get_line_length(fp_spec);
-    fseek(fp_spec, 0, SEEK_SET);
-    char buffer[length+1];
-    fgets(buffer, sizeof(buffer), fp_spec);
-    char *target = "filename";
-    if (strstr(buffer, target) == NULL)
-    {
-        printf("\"filename\" was not found on the first line of the spec file.\n");
-    }
-
-    char *filenames = buffer + 10;
-    LOG("the length of the line is: %i\n", length);
-    LOG("the line is: %s\n", buffer);
-    LOG("the filenames are: %s\n", filenames);
-
-    char *delim = " ";
-    char *filename_token = strtok(filenames, delim);
-    while (filename_token != NULL)
-    {
-        LOG("the token is: %s\n", filename_token);
-        // TODO: add case insensitivity: convert both filename_token and df_name to upper/lower
-        if (strstr(df_name, filename_token) != NULL)
-        {
-            LOG("returning filename token: %s\n", filename_token);
-            char *return_value = malloc(strlen(filename_token) + 1);
-            strcpy(return_value, filename_token);
-            return return_value;
-        }
-        filename_token = strtok(NULL, delim);
-    }
-    return NULL;
-}
-
-
 int manual_inputs(char **ptr_in_ff, char **ptr_in_spec, char (**ptr_rt_list)[3], uint8_t **ptr_rt_count)
 {
-    *ptr_in_ff = get_string("Enter the name of the data file or the folder that contains multiple data files: ");
+    *ptr_in_ff = get_string("Enter the name of the data file: ");
     *ptr_in_spec = get_string("Enter the name of the spec file: ");
 
-    char *in_rt_blob = get_string("Enter the list of record types separated by space (Don't leave out leading zeros): ");
+    char *in_rt_blob = get_string("Enter the list of record types separated by space (Don't leave out leading zeros) or 'all' for all record types: ");
     // LOG("rt_blob is: %s\n", in_rt_blob);
     // LOG("this is len of in_rt_blob: %li\n", strlen(in_rt_blob));
     remove_trailing_spaces(in_rt_blob);
@@ -275,23 +185,3 @@ int manual_inputs(char **ptr_in_ff, char **ptr_in_spec, char (**ptr_rt_list)[3],
         return 0;
     }
 }
-
-void remove_trailing_spaces(char *str)
-{
-    int len = strlen(str);
-    while (len > 0 && isspace(str[len - 1]))
-    {
-        len--;
-    }
-    str[len] = '\0';
-}
-
-
-
-
-
-// void in_specfile_verification(char *file)
-// {
-//     int length = strlen(file);
-
-// }

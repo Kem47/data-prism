@@ -1,6 +1,6 @@
 #include "parse.h"
 
-void gz_parser(Specs specs, gzFile fp_gz, char *input_filename) // I should probably pass in specs as a 
+void gz_parser(Specs specs, gzFile fp_gz, char *input_filename) // I should probably pass in specs as a pointer??
 {
     int rt_len = strlen(specs.first_rt->record_type);
     LOG("%s: rt_len is %i\n", __func__, rt_len);
@@ -16,19 +16,6 @@ void gz_parser(Specs specs, gzFile fp_gz, char *input_filename) // I should prob
     LOG("%s: line length is %i and buffer length is %li\n", __func__,  length, sizeof(buffer));
     int ffreq = fflush_frequency(length, specs.num_rt);
     LOG("%s: fflush_frequency is %i\n", __func__, ffreq);
-    // if (gzgets(fp_gz, buffer, length+1) != NULL)
-    // {
-    //     // buffer[length] = '\0';
-    //     LOG("%s[END]\n", buffer);
-    // }
-
-
-    // for (int i = 1, limit = 400; i < limit; i++)
-    // {
-    //     char c;
-    //     c = gzgetc(fp_gz);
-    //     LOG("Character %i is \"%c\"\n", i, c);
-    // }
 
     // PSEUDO CODE: START
     // READ LINE
@@ -54,12 +41,6 @@ void gz_parser(Specs specs, gzFile fp_gz, char *input_filename) // I should prob
         buffer[length-1] = '\0';  // this overwrites the '\n' character at the end so that it is just the data from that line
 
         // LOG("%s[END OF LINE] Line size is %li\n", buffer, strlen(buffer));
-        // char input_record_type[rt_len+1];
-        // for (int i = 0, limit = rt_len + 1; i < limit; i++)
-        // {
-        //     input_record_type[i] = buffer[i];
-        // }
-        // input_record_type[rt_len] = '\n';
 
         RecordTypeInfo *next = specs.first_rt;
         bool rt_spec_found = false;
@@ -83,12 +64,6 @@ void gz_parser(Specs specs, gzFile fp_gz, char *input_filename) // I should prob
                 next = next->next;
             }
         }
-
-        // if (!rt_spec_found)
-        // {
-        //     buffer[rt_len] = '\0';
-        //     printf("WARNING: your spec file did not have specs for record type %s\n", buffer);
-        // }
     }
 
 
@@ -99,7 +74,6 @@ void gz_parser(Specs specs, gzFile fp_gz, char *input_filename) // I should prob
 void open_new_output_file(RecordTypeInfo *rt_specs, char *input_filename)
 {
     LOG("%s: launched the function with rt %s\n", __func__, rt_specs->record_type);
-    // if there is a pointer to a file currently in the record type then close it.
     if (rt_specs->current_output_file != NULL)
     {
         fclose(rt_specs->current_output_file->fp);
@@ -121,7 +95,6 @@ void open_new_output_file(RecordTypeInfo *rt_specs, char *input_filename)
     new_file->file_name = malloc(strlen(input_filename) + strlen(OUTPUT_FILETYPE) + strlen(rt_specs->record_type) + strlen(file_number) + (strlen("_") * 2) + strlen(".") + 1);
     sprintf(new_file->file_name, "%s_%s_%s.%s", input_filename, rt_specs->record_type, file_number, OUTPUT_FILETYPE);
     LOG("%s: output filename is %s\n", __func__, new_file->file_name);
-    // "input/B20231010.PVX.Z_02_1.csv"
 
     FILE *ptr_output_file = fopen(new_file->file_name, "w");
     new_file->fp = ptr_output_file;
@@ -158,6 +131,7 @@ void open_new_output_file(RecordTypeInfo *rt_specs, char *input_filename)
     LOG("%s: FINISHED\n", __func__);
 }
 
+
 void write_row(RecordTypeInfo *rt_specs, char *line, int ffreq)
 {
     int start = 0;
@@ -183,8 +157,6 @@ void write_row(RecordTypeInfo *rt_specs, char *line, int ffreq)
         {
             fwrite(line+start, len, 1, rt_specs->current_output_file->fp);  // some delicious pointer maths here ;)
         }
-        // fwrite(line+start, next_col->size, 1, rt_specs->current_output_file->fp);
-        // start += next_col->size;
         start += len;
 
         next_col = next_col->next;
