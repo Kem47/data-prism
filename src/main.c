@@ -19,7 +19,7 @@ int manual_inputs(char **ptr_in_ff, char **ptr_in_spec, char (**ptr_rt_list)[3],
 
 int main(int argc, char *argv[])
 {
-    printf("\n========================================\n  DATA-PRISM\n  Program by KEMAL ATAYEV\n  Version: Beta 2\n========================================\n\n");
+    printf("\n========================================\n  DATA-PRISM\n  Developed by KEMAL ATAYEV\n  Version: Beta 2\n========================================\n\n");
 
     // USER INPUTS
 

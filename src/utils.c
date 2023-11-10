@@ -65,20 +65,21 @@ int fflush_frequency(int line_len, int num_rt)
 }
 
 
-void close_output_files(Specs *specs)
-{
-    //
-    RecordTypeInfo *next = specs->first_rt;
-    while (next != NULL)
-    {
-        fclose(next->current_output_file->fp);
-    }
-}
+// NOT IN USE
+// void close_output_files(Specs *specs)
+// {
+//     //
+//     RecordTypeInfo *next = specs->first_rt;
+//     while (next != NULL)
+//     {
+//         fclose(next->current_output_file->fp);
+//     }
+// }
 
 
 // RELEASE MEMORY
 
-// ORIGINAL
+// ORIGINAL - NOT IN USE
 // void release_mem_fp(Specs *specs)
 // {
 //     // 

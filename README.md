@@ -2,6 +2,8 @@
 
 ![Data-Prism](data_prism_small.png)
 
+Do you hate fixed-width files? Have they been a thorn in your side? When you received a file to analyse only to find out that it was a fixed-width file did you reconsider working on it?
+
 Data-Prism is a small program that is used to cut up a fixed width data file into its component record types and columns. It takes in the data file, a spec file for the data file and the record types that the user would like to be saved. It then saves each record type into its own .csv file. It makes sure that these csv files are Excel-friendly by limiting the number of rows that can be written into a single csv file.
 
 As part of this I have also created a user-friendly spec file format/layout. Please see spec_file_template. I've chosen not to go for conventional formats like JSON or YAML because they have a barrier to entry, especially JSON. The spec format used in this project is easy to both prepare and prepare.
