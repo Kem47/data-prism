@@ -97,6 +97,7 @@ void open_new_output_file(RecordTypeInfo *rt_specs, char *input_filename)
     LOG("%s: output filename is %s\n", __func__, new_file->file_name);
 
     FILE *ptr_output_file = fopen(new_file->file_name, "w");
+    fputs("\xEF\xBB\xBF", ptr_output_file);  // UTF-8 BOM (byte order mark)
     new_file->fp = ptr_output_file;
 
     ColumnInfo *next_column = rt_specs->first_column;
