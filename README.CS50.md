@@ -1,5 +1,5 @@
 # DATA-PRISM
-#### Video Demo:  <URL HERE>
+#### Video Demo:  https://youtu.be/HouhoIG3zjc
 #### Description:
 
 The project I have chosen to do for my CS50 Intro to Computer Science Final Project is a mixed record type fixed-width file parser written in C.
@@ -52,7 +52,7 @@ All of this is done in one big function. I also have a small function to trim wh
 parse.c :
 Reading the data file line by line and cutting each line into columns was relatively simple. At this point I knew I was past the hardest stuff and the end was in sight. I had to be careful with line length and nul characters and where they appear. I saved the outputs into csv files as they are quite easy to write in C. The only header information I added is 'UTF-8' byte order mark (BOM). Here I implemented a feature that I always wanted and thought would be quite simple. Excel annoyingly does not read more than ~1 million rows of a file. I've worked with data files that had several million rows in a specific record type. I wanted to make a feature that would write the same record type into multiple files if it was more than million lines. I was able to implement it in the end, however not in the "ideal" way that I had in my head and this is the perfect example of what I meant when I talked about those "ideal" features that you have before you begin the work. 
 
-My initial idea was to split the record type into even chunks that are under 1 million rows. So for example if the record type had 2.1m rows it would split it into 3 files of 700k lines as that's the lowest number of files that could fit chunks of under 1m. That sounds very neat however once I was actually programming I realised (and this is something I probably could have realised before starting) that I am reading and writing the lines from the data file one at a time. That means that I am unable to know ahead of time how many rows a particular record type has and how to split it. I still implemented the general idea but now I just set an arbitrary number that when the file being written into reaches the program closes it and opens a new file (with an incremented part number) and starts writing into that one. 
+My initial idea was to split the record type into even chunks that are under 1 million rows. So for example if the record type had 2.1m rows it would split it into 3 files of 700k lines as that's the lowest number of files that could fit chunks of under 1m. That sounds very neat however once I was actually programming I realised (and this is something I probably could have realised before starting) that I am reading and writing the lines from the data file one at a time. That means that I am unable to know ahead of time how many rows a particular record type has and how to split it. I still implemented the general idea but now I just set an arbitrary number (MAX_WRITE_ROWS in configs.h) that when the file being written into reaches the program closes it and opens a new file (with an incremented part number) and starts writing into that one. 
 
 There are 3 functions in parse.c. gz_parser is the main function that does the reading of the data in the data file. The other 2 are open_new_output_file and write_row that do exactly that. oepn_new_output_file does also close a previous part if the limit was reached. It does make use of the struct that are in spec.h called OutputFileInfo. wrtite_row simply reads the record type from the beginning of the line, retrieves the Column Info for that record type and then cuts that line accordingly and then writes it into the output file with the appropriate delimiter.
 
@@ -125,7 +125,6 @@ record_type_column_width, column_width, ...
 Submission notes:
 - I am submitting my linux version of the project but I also have windows and macos builds as well.
 - I am submitting a gzipped example file TEST_FILE.XYZ.gz for testing as well as test_spec.dfs with the specs of that example file.
-- I am including libz.a and libcs50.a in my submission as I'm not sure what the submission checking environment looks like. This way it will be able to compile and run the code without any external installation requirements. I would usually not redistribute these libraries as part of my repo.
 
 
 
